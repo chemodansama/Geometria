@@ -25,18 +25,14 @@ foreach(SOURCE IN LISTS all_code_files)
     source_group("${SOURCE_GROUP}" FILES "${SOURCE}")
 endforeach()
 
-if (CMAKE_GENERATOR MATCHES "Visual Studio")
-    # set_property(TARGET GeometriaRender PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-endif()
-
 target_compile_features(GeometriaBase-tests PRIVATE cxx_std_17)
 
 target_link_libraries(GeometriaBase-tests PUBLIC geometria::base)
 
 include(FetchContent)
 FetchContent_Declare(
-  googletest
-  URL https://github.com/google/googletest/archive/f8d7d77c06936315286eb55f8de22cd23c188571.zip
+    googletest
+    URL https://github.com/google/googletest/archive/f8d7d77c06936315286eb55f8de22cd23c188571.zip
 )
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
