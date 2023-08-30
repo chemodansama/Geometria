@@ -5,10 +5,6 @@ option(GEOMETRIA_STATIC_RUNTIME "Static MSVC runtime" OFF)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
 
-configure_file (
-  "${PROJECT_SOURCE_DIR}/source/SamplesConfig.h.in"
-  "${PROJECT_BINARY_DIR}/SamplesConfig.h"
-)
 include_directories("${PROJECT_BINARY_DIR}")
 
 set(

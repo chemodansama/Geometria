@@ -1,3 +1,0 @@
-// the configured options and settings for Samples
-#define Samples_VERSION_MAJOR @Samples_VERSION_MAJOR@
-#define Samples_VERSION_MINOR @Samples_VERSION_MINOR@
