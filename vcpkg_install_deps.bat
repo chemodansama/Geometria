@@ -1,0 +1,12 @@
+vcpkg install libpng
+vcpkg install libpng:x64-windows
+vcpkg install zlib
+vcpkg install zlib:x64-windows
+vcpkg install glfw3
+vcpkg install glfw3:x64-windows
+vcpkg install glew
+vcpkg install glew:x64-windows
+vcpkg install glm
+vcpkg install glm:x64-windows
+vcpkg install fmt
+vcpkg install fmt:x64-windows
