@@ -54,7 +54,6 @@ target_link_libraries(Samples geometria::extension)
 
 target_include_directories(Samples PRIVATE "${PROJECT_SOURCE_DIR}/source")
 
-
 find_package(glfw3 CONFIG REQUIRED)
 target_link_libraries(Samples glfw)
 
