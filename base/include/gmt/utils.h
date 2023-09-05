@@ -63,13 +63,17 @@ inline void log(fmt::memory_buffer &ss)
 #endif
 
     time_t rawtime;
-
     time(&rawtime);
-	std::tm timeinfo;
-    localtime_s(&timeinfo, &rawtime);
+#ifdef ANDROID
+    const struct tm* timeinfo = std::localtime(&rawtime);
+#else
+    std::tm localtime;
+    localtime_s(&localtime, &rawtime);
+    auto timeinfo = &localtime;
+#endif
 
     std::ostringstream os;
-    os << std::put_time(&timeinfo, "%H:%M:%S");
+    os << std::put_time(timeinfo, "%H:%M:%S");
 
     LOGI("%s: %s", os.str().c_str(), std::string{ ss.data(), ss.size() }.c_str());
 #ifdef __GNUC__
@@ -144,7 +148,7 @@ auto randomDistribution(T min, T max)
 {
     using D = std::uniform_real_distribution<T>;
     D actualDistribution{ min, max };
-    return Distribution<D>(actualDistribution, details::randomEngine());
+    return Distribution<D>(actualDistribution, ::details::randomEngine());
 }
 
 template <typename T, typename std::enable_if_t<std::is_integral_v<T>, bool> = true>
@@ -152,21 +156,21 @@ auto randomDistribution(T min, T max)
 {
     using D = std::uniform_int_distribution<T>;
     D actualDistribution{ min, max };
-    return Distribution<D>(actualDistribution, details::randomEngine());
+    return Distribution<D>(actualDistribution, ::details::randomEngine());
 }
 
 template <typename T, typename std::enable_if_t<std::is_floating_point_v<T>, bool> = true>
 T random(T min, T max)
 {
     std::uniform_real_distribution<T> dist(min, max);
-    return dist(details::randomEngine());
+    return dist(::details::randomEngine());
 }
 
 template <typename T, typename std::enable_if_t<std::is_integral_v<T>, bool> = true>
 T random(T min, T max)
 {
     std::uniform_int_distribution<T> dist(min, max);
-    return dist(details::randomEngine());
+    return dist(::details::randomEngine());
 }
 
 template <typename T>
@@ -279,7 +283,7 @@ template <typename... T>
 std::string concat(const T & ... t)
 {
     fmt::memory_buffer ss;
-    return details::concat(ss, t...);
+    return ::details::concat(ss, t...);
 }
 
 }
