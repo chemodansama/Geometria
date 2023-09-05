@@ -4,7 +4,7 @@
 //  Created by Grigory Shabaganov on 26.08.2017.
 //
 
-#include "gmt/Debug.h"
+#include "gmt/debug.h"
 
 #ifdef __APPLE__
 #elif defined(_WIN32)
