@@ -45,12 +45,17 @@ std::default_random_engine &randomEngine()
 namespace gmt
 {
 
+namespace utils
+{
+
 long getTime()
 {
 	const auto time =
 		std::chrono::duration_cast<std::chrono::milliseconds>(
 			std::chrono::high_resolution_clock::now().time_since_epoch()).count();
 	return static_cast<long>(time);
+}
+
 }
 
 }
