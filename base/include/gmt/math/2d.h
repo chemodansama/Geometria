@@ -9,6 +9,8 @@
 #include <cmath>
 #include <cassert>
 
+#include <glm/glm.hpp>
+
 namespace gmt
 {
 
@@ -41,6 +43,9 @@ struct alignas(T) Vector
 
     Vector() = default;
     Vector(T x, T y);
+
+    Vector(const glm::vec2 &v): x{ v.x }, y{ v.y } {}
+    operator glm::vec2() const { return glm::vec2{ x, y }; }
 
     T *data();
     bool operator==(const Vector<T> &v) const;

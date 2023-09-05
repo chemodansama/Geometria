@@ -3,6 +3,7 @@ project(GeometriaBase-tests)
 
 set(
     SOURCES
+    "2d.cpp"
     "Event.cpp"
     "Observable.cpp"
     "path.cpp"
