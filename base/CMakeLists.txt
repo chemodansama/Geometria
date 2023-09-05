@@ -10,6 +10,7 @@ set(
 
     "source/assets.cpp"
     "source/debug.cpp"
+	"source/easings.cpp"
     "source/Observable.cpp"
     "source/path.cpp"
     "source/utils.cpp"
@@ -23,6 +24,7 @@ set(
 
     "include/gmt/assets.h"
     "include/gmt/debug.h"
+	"include/gmt/easings.h"
     "include/gmt/Event.h"
     "include/gmt/gmt.h"
     "include/gmt/Observable.h"

@@ -11,6 +11,7 @@
 
 #include "gmt/assets.h"
 #include "gmt/debug.h"
+#include "gmt/easings.h"
 #include "gmt/Event.h"
 #include "gmt/Observable.h"
 #include "gmt/path.h"
