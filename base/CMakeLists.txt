@@ -10,7 +10,7 @@ set(
 
     "source/assets.cpp"
     "source/debug.cpp"
-	"source/easings.cpp"
+    "source/easings.cpp"
     "source/Observable.cpp"
     "source/path.cpp"
     "source/utils.cpp"
@@ -24,7 +24,7 @@ set(
 
     "include/gmt/assets.h"
     "include/gmt/debug.h"
-	"include/gmt/easings.h"
+    "include/gmt/easings.h"
     "include/gmt/Event.h"
     "include/gmt/gmt.h"
     "include/gmt/Observable.h"
@@ -59,10 +59,10 @@ if (CMAKE_GENERATOR MATCHES "Visual Studio")
     target_link_libraries(GeometriaBase PUBLIC Dbghelp.lib)
 endif()
 
-find_package(glm CONFIG REQUIRED)
+add_subdirectory("${PROJECT_SOURCE_DIR}/thirdparty/glm-0.9.9.8")
 target_link_libraries(GeometriaBase PUBLIC glm::glm)
 
-find_package(fmt CONFIG REQUIRED)
+add_subdirectory("${PROJECT_SOURCE_DIR}/thirdparty/fmt-10.1.1")
 target_link_libraries(GeometriaBase PUBLIC fmt::fmt-header-only)
 
 if (GEOMETRIA_BUILD_TESTS)
