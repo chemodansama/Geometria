@@ -8,7 +8,7 @@
 
 #include <random>
 
-#ifdef ANDROID
+#ifdef __ANDROID__
 #include <android/log.h>
 #elif defined(_WIN32)
 #include <iostream>
@@ -26,7 +26,7 @@
 #include <glm/glm.hpp>
 #include <fmt/format.h>
 
-#ifdef ANDROID
+#ifdef __ANDROID__
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, "gmt", __VA_ARGS__)
 #elif defined(_WIN32)
 #define LOGI(...) { printf(__VA_ARGS__); printf("\n"); }
@@ -64,7 +64,7 @@ inline void log(fmt::memory_buffer &ss)
 
     time_t rawtime;
     time(&rawtime);
-#ifdef ANDROID
+#ifdef __ANDROID__
     const struct tm* timeinfo = std::localtime(&rawtime);
 #else
     std::tm localtime;
