@@ -195,6 +195,30 @@ private:
     }
 };
 
+class Uniform1f : public Uniform<float>
+{
+public:
+    using Uniform<float>::Uniform;
+
+private:
+    void bind(int location, float value) const override
+    {
+        glUniform1f(location, value);
+    }
+};
+
+class Uniform4f : public Uniform<float*>
+{
+public:
+    using Uniform<float*>::Uniform;
+
+private:
+    void bind(int location, float *value) const override
+    {
+        glUniform4fv(location, 1, value);
+    }
+};
+
 class UniformMat4f : public UniformMat<float>
 {
 public:
@@ -204,6 +228,18 @@ private:
     void bind(int location, const float *value, bool transpose) const override
     {
         glUniformMatrix4fv(location, 1, transpose, value);
+    }
+};
+
+class UniformMat3f : public UniformMat<float>
+{
+public:
+    using UniformMat<float>::UniformMat;
+
+private:
+    void bind(int location, const float *value, bool transpose) const override
+    {
+        glUniformMatrix3fv(location, 1, transpose, value);
     }
 };
 
