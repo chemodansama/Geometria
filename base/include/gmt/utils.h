@@ -28,7 +28,7 @@
 
 #ifdef __ANDROID__
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, "gmt", __VA_ARGS__)
-#elif defined(_WIN32)
+#elif defined(_WIN32) || defined(__APPLE__)
 #define LOGI(...) { printf(__VA_ARGS__); printf("\n"); }
 #else
 #define LOGI(...) CCLOG(__VA_ARGS__)
@@ -64,7 +64,7 @@ inline void log(fmt::memory_buffer &ss)
 
     time_t rawtime;
     time(&rawtime);
-#ifdef __ANDROID__
+#if defined(__ANDROID__) || defined(__APPLE__)
     const struct tm* timeinfo = std::localtime(&rawtime);
 #else
     std::tm localtime;
