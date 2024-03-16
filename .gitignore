@@ -1,1 +1,3 @@
 build/
+samples/android/.idea/
+samples/android/app/src/main/cpp/.geometria/
