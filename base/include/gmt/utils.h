@@ -115,6 +115,9 @@ void log(T... t);
 template <typename F, typename... T>
 void logf(F&& format, T... t);
 
+template <typename F>
+void logf(F&& format);
+
 inline void log(const std::string &str);
 inline void log(const char *str);
 
@@ -191,17 +194,21 @@ template <typename T>
 Iterable<T> iterable(std::pair<T, T> range) { return Iterable<T>{ std::move(range) }; }
 
 #ifdef NDEBUG
+
 template <typename T, typename... Args>
 void assume(T&& condition, Args&&... args)
 {
     (void)condition;
 }
+
 template <typename T>
 void assume(T&& condition)
 {
     (void)condition;
 }
+
 #else
+
 template <typename T, typename... Args>
 void assume(T&& condition, Args&&... args)
 {
@@ -210,6 +217,7 @@ void assume(T&& condition, Args&&... args)
         std::abort();
     }
 }
+
 template <typename T>
 void assume(T&& condition)
 {
@@ -217,6 +225,7 @@ void assume(T&& condition)
         std::abort();
     }
 }
+
 #endif
 
 }
@@ -241,7 +250,13 @@ void log(T... t)
 template <typename F, typename... T>
 void logf(F&& format, T... t)
 {
-    log(fmt::format(std::forward<F>(format), std::forward<T>(t)...));
+    log(fmt::format(fmt::runtime(format), std::forward<T>(t)...));
+}
+
+template <typename F>
+void logf(F&& format)
+{
+    log(std::forward<F>(format));
 }
 
 void log(const std::string &str)
