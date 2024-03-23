@@ -82,6 +82,12 @@ static_assert(sizeof(Vector<float>) == 2 * sizeof(float), "");
 using vec2 = Vector<float>;
 
 template <typename T>
+Vector<T> mix(const Vector<T> &x, const Vector<T> &y, const T a)
+{
+    return x * (T(1) - a) + y * a;
+}
+
+template <typename T>
 Vector<T> vector(const T *v)
 {
     return Vector<T>{ v[0], v[1] };
