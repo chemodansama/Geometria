@@ -34,7 +34,8 @@ foreach(SOURCE IN LISTS SOURCES)
     source_group("${SOURCE_GROUP}" FILES "${SOURCE}")
 endforeach()
 
-target_compile_features(Samples PRIVATE cxx_std_17)
+target_compile_features(Samples PRIVATE cxx_std_20)
+target_compile_definitions(Samples PRIVATE GLM_ENABLE_EXPERIMENTAL)
 
 # frameworks go here
 if (APPLE)

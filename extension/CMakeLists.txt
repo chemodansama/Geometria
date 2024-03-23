@@ -25,7 +25,7 @@ if (CMAKE_GENERATOR MATCHES "Visual Studio")
     endif()
 endif()
 
-target_compile_features(GeometriaExtension PRIVATE cxx_std_17)
+target_compile_features(GeometriaExtension PRIVATE cxx_std_20)
 
 find_package(PNG REQUIRED 16)
 target_link_libraries(GeometriaExtension PUBLIC PNG::PNG)

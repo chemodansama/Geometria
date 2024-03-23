@@ -1,13 +1,13 @@
 #pragma once
 
-#include <string>
 #include <algorithm>
-#include <initializer_list>
-#include <unordered_map>
-
-#include <vector>
-#include <utility>
 #include <exception>
+#include <initializer_list>
+#include <iterator>
+#include <string>
+#include <unordered_map>
+#include <utility>
+#include <vector>
 
 #include <glm/glm.hpp>
 

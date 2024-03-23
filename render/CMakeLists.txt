@@ -51,7 +51,8 @@ if (CMAKE_GENERATOR MATCHES "Visual Studio")
     endif()
 endif()
 
-target_compile_features(GeometriaRender PRIVATE cxx_std_17)
+target_compile_features(GeometriaRender PRIVATE cxx_std_20)
+target_compile_definitions(GeometriaRender PRIVATE GLM_ENABLE_EXPERIMENTAL)
 
 # frameworks go here
 if (APPLE) 

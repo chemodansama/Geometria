@@ -50,7 +50,8 @@ foreach(SOURCE IN LISTS all_code_files)
     source_group("${SOURCE_GROUP}" FILES "${SOURCE}")
 endforeach()
 
-target_compile_features(GeometriaBase PRIVATE cxx_std_17)
+target_compile_features(GeometriaBase PRIVATE cxx_std_20)
+target_compile_definitions(GeometriaBase PRIVATE GLM_ENABLE_EXPERIMENTAL)
 
 if (CMAKE_GENERATOR MATCHES "Visual Studio")
     if (GEOMETRIA_STATIC_RUNTIME)
@@ -59,7 +60,7 @@ if (CMAKE_GENERATOR MATCHES "Visual Studio")
     target_link_libraries(GeometriaBase PUBLIC Dbghelp.lib)
 endif()
 
-add_subdirectory("${PROJECT_SOURCE_DIR}/thirdparty/glm-0.9.9.8")
+add_subdirectory("${PROJECT_SOURCE_DIR}/thirdparty/glm-1.0.1")
 target_link_libraries(GeometriaBase PUBLIC glm::glm)
 
 add_subdirectory("${PROJECT_SOURCE_DIR}/thirdparty/fmt-10.1.1")
