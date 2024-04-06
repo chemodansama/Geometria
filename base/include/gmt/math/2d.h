@@ -6,8 +6,11 @@
 
 #pragma once
 
+#include <array>
 #include <cmath>
 #include <cassert>
+#include <span>
+#include <type_traits>
 
 #include <glm/glm.hpp>
 
@@ -141,6 +144,29 @@ template <typename T>
 auto cross(const T &left, const T &right)
 {
     return left.x * right.y - left.y * right.x;
+}
+
+template <typename T>
+int mergePoints(std::span<T> points, const float margin = 0.001f)
+{
+    if (points.empty()) {
+        return 0;
+    }
+
+    int k = 0;
+    for (int i = 1; i < static_cast<int>(points.size()); i++) {
+        if ((points[k] - points[i]).length() > margin) {
+            k += 1;
+            points[k] = points[i];
+        }
+    }
+    return k + 1;
+}
+
+template <typename It>
+auto make_span(It from, It to)
+{
+    return std::span<std::remove_reference_t<decltype(*from)>>(from, to);
 }
 
 // Implementation
@@ -370,7 +396,7 @@ bool intersectsCircle(T r, const Vector<T> &s, const Vector<T> &t, Vector<T> *ou
         } else if (!inside[0]) {
             out[0] = out[1];
             *count = 1;
-        } else if (!inside[1])  {
+        } else if (!inside[1]) {
             *count = 1;
         }
     } else {
@@ -383,6 +409,70 @@ bool intersectsCircle(T r, const Vector<T> &s, const Vector<T> &t, Vector<T> *ou
     return true;
 }
 
+}
+
+namespace circle
+{
+    template <typename It>
+    bool containsPolygon(float r, It begin, It end)
+    {
+        const auto radiusSq = r * r;
+        for (auto it = begin; it != end; ++it) {
+            if (it->lengthSq() > radiusSq) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    template <typename T>
+    bool containsPolygon(float r, const std::initializer_list<T> &points)
+    {
+        return containsPolygon(r, points.begin(), points.end());
+    }
+
+    template <typename T, typename K>
+    bool intersectsRectangle(float r, const T& center, const T& extents, K out)
+    {
+        const auto a = center - extents;
+        const auto b = center + T{ extents.x, -extents.y };
+        const auto c = center + extents;
+        const auto d = center + T{ -extents.x, extents.y };
+
+        std::array<T, 8> intersections;
+        int total{ 0 };
+        int count{ 0 };
+        if (segment::intersectsCircle(r, a, b, intersections.data(), &count)) {
+            total += count;
+        }
+
+        if (segment::intersectsCircle(r, b, c, intersections.data() + total, &count)) {
+            total += count;
+        }
+
+        if (segment::intersectsCircle(r, c, d, intersections.data() + total, &count)) {
+            total += count;
+        }
+
+        if (segment::intersectsCircle(r, d, a, intersections.data() + total, &count)) {
+            total += count;
+        }
+
+        total = mergePoints(make_span(intersections.data(), intersections.data() + total));
+        for (int i = 0; i < total; i++) {
+            *out = intersections[i];
+            ++out;
+        }
+
+        if (total == 0) {
+            if (containsPolygon(r, { a, b, c, d })) {
+                // Rectangle is fully contained, return true and return no intersection points.
+                return true;
+            }
+        }
+
+        return total > 0;
+    }
 }
 
 //
