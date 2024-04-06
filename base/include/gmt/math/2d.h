@@ -9,8 +9,10 @@
 #include <array>
 #include <cmath>
 #include <cassert>
+#include <iterator>
 #include <span>
 #include <type_traits>
+#include <vector>
 
 #include <glm/glm.hpp>
 
@@ -472,6 +474,23 @@ namespace circle
         }
 
         return total > 0;
+    }
+
+    template <typename T, typename K>
+    bool intersectsRectangle(float r, const T& center, const T& extents, float angle, K out)
+    {
+        const auto c = gmt::Rotation{ -angle }.apply(center);
+        std::vector<T> v;
+        const auto result = intersectsRectangle(r, c, extents, std::back_inserter(v));
+        if (!v.empty()) {
+            
+            gmt::Rotation r{ angle };
+            for (auto& i : v) {
+                *out = r.apply(i);
+                ++out;
+            }
+        }
+        return result;
     }
 }
 

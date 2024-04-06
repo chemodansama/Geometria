@@ -2,6 +2,7 @@
 
 #include <iterator>
 
+#include <glm/gtc/constants.hpp>
 #include "gmt/math/2d.h"
 
 using namespace gmt;
@@ -132,4 +133,29 @@ TEST(CircleRectangleIntersection, circleContainsRectange)
         gmt::vec2(0.1f, 0.1f), std::back_inserter(x));
     EXPECT_TRUE(result);
     EXPECT_EQ(0, x.size());
+}
+
+TEST(CircleRectangleIntersection, orientedIntersection)
+{
+    std::vector<gmt::vec2> x;
+    const auto result = gmt::circle::intersectsRectangle(1.0f, gmt::vec2(0.0f, -1.0f),
+        gmt::vec2(0.5f, 10.0f), -glm::half_pi<float>(), std::back_inserter(x));
+    EXPECT_TRUE(result);
+    EXPECT_EQ(2, x.size());
+    EXPECT_NEAR(x[0].y, x[1].y, 0.001f);
+    EXPECT_NEAR(-x[0].x, x[1].x, 0.001f);
+}
+
+TEST(CircleRectangleIntersection, orientedIntersection2)
+{
+    std::vector<gmt::vec2> x;
+    const auto t = sqrt(2.0f) / 2.0f;
+    const auto result = gmt::circle::intersectsRectangle(1.0f, gmt::vec2(t, -t),
+        gmt::vec2(1.0f, 10.0f), -glm::quarter_pi<float>(), std::back_inserter(x));
+    EXPECT_TRUE(result);
+    EXPECT_EQ(2, x.size());
+    EXPECT_NEAR(x[0].x, x[0].y, 0.001f);
+    EXPECT_NEAR(x[1].x, x[1].y, 0.001f);
+    EXPECT_NEAR(x[0].x, -x[1].y, 0.001f);
+    EXPECT_NEAR(t, x[0].x, 0.001f);
 }
