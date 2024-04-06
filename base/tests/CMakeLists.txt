@@ -26,7 +26,7 @@ foreach(SOURCE IN LISTS all_code_files)
     source_group("${SOURCE_GROUP}" FILES "${SOURCE}")
 endforeach()
 
-target_compile_features(GeometriaBase-tests PRIVATE cxx_std_17)
+target_compile_features(GeometriaBase-tests PRIVATE cxx_std_20)
 
 target_link_libraries(GeometriaBase-tests PUBLIC geometria::base)
 
