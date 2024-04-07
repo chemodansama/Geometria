@@ -118,7 +118,7 @@ float quadInOut(float t,float b , float c, float d)
     if (t < 1.0f) {
         return c / 2.0f * t * t + b;
     }
-    return -c / 2.0f * (((t - 2.0f) * (t - 1.0f)) - 1.0f) + b;
+    return -c / 2.0f * (((t - 3.0f) * (t - 1.0f)) - 1.0f) + b;
 }
 
 float compute(Easings easing, float t, float d)
@@ -130,6 +130,7 @@ float compute(Easings easing, float t, float d)
            easing == Easings::QUAD_INOUT ? quadInOut(t, 0, 1, d) :
            easing == Easings::CUBIC_OUT ? cubicOut(t, 0, 1, d) :
            easing == Easings::CUBIC_INOUT ? cubicInOut(t, 0, 1, d) :
+           easing == Easings::CIRC_IN ? circIn(t, 0, 1, d) :
            easing == Easings::CIRC_OUT ? circOut(t, 0, 1, d) :
            easing == Easings::CIRC_INOUT ? circInOut(t, 0, 1, d) :
            easing == Easings::QUART_IN ? quartIn(t, 0, 1, d) :

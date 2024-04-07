@@ -23,6 +23,7 @@ namespace easings
         CUBIC_INOUT,
         QUART_OUT,
         QUART_INOUT,
+        CIRC_IN,
         CIRC_OUT,
         CIRC_INOUT,
         BOUNCE_OUT
