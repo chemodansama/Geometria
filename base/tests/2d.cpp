@@ -159,3 +159,17 @@ TEST(CircleRectangleIntersection, orientedIntersection2)
     EXPECT_NEAR(x[0].x, -x[1].y, 0.001f);
     EXPECT_NEAR(t, x[0].x, 0.001f);
 }
+
+TEST(CircleRectangleIntersection, glm)
+{
+    std::vector<glm::vec2> x;
+    const auto t = sqrt(2.0f) / 2.0f;
+    const auto result = gmt::circle::intersectsRectangle(1.0f, glm::vec2(t, -t),
+        glm::vec2(1.0f, 10.0f), -glm::quarter_pi<float>(), std::back_inserter(x));
+    EXPECT_TRUE(result);
+    EXPECT_EQ(2, x.size());
+    EXPECT_NEAR(x[0].x, x[0].y, 0.001f);
+    EXPECT_NEAR(x[1].x, x[1].y, 0.001f);
+    EXPECT_NEAR(x[0].x, -x[1].y, 0.001f);
+    EXPECT_NEAR(t, x[0].x, 0.001f);
+}

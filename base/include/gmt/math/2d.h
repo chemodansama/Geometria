@@ -16,6 +16,11 @@
 
 #include <glm/glm.hpp>
 
+#ifndef GLM_ENABLE_EXPERIMENTAL
+#define GLM_ENABLE_EXPERIMENTAL
+#endif
+#include <glm/gtx/norm.hpp>
+
 namespace gmt
 {
 
@@ -149,6 +154,42 @@ auto cross(const T &left, const T &right)
 }
 
 template <typename T>
+auto dot(const T& left, const T& right)
+{
+    return left.dot(right);
+}
+
+template <>
+inline auto dot<glm::vec2>(const glm::vec2& left, const glm::vec2& right)
+{
+    return glm::dot(left, right);
+}
+
+template <typename T>
+auto length(const T &p)
+{
+    return p.length();
+}
+
+template <>
+inline auto length<glm::vec2>(const glm::vec2& p)
+{
+    return glm::length(p);
+}
+
+template <typename T>
+auto lengthSq(const T& p)
+{
+    return p.lengthSq();
+}
+
+template <>
+inline auto lengthSq<glm::vec2>(const glm::vec2& p)
+{
+    return glm::length2(p);
+}
+
+template <typename T>
 int mergePoints(std::span<T> points, const float margin = 0.001f)
 {
     if (points.empty()) {
@@ -239,14 +280,12 @@ template <typename T>
 bool intersectsLine(const Vector<T> &p, const Vector<T> &r, const Vector<T> &q, const Vector<T> &s,
         Vector<T> *out, LineIntersectionData *data = nullptr)
 {
-    auto t = (q - p).cross(s);
-    auto v = r.cross(s);
-
+    const auto v = r.cross(s);
     if (v == 0) {
         return false;
     }
 
-    t /= v;
+    const auto t = (q - p).cross(s) / v;
     *out = p + r * t;
 
     if (data) {
@@ -256,28 +295,28 @@ bool intersectsLine(const Vector<T> &p, const Vector<T> &r, const Vector<T> &q, 
     return true;
 }
 
-template <typename T>
-bool intersectsCircle(T r, const Vector<T> &s, const Vector<T> &t, Vector<T> *out, int *count)
+template <typename T, typename V, typename Out>
+bool intersectsCircle(T r, const V &s, const V &t, Out out, int *count)
 {
-    auto dx = t.x - s.x;
-    auto dy = t.y - s.y;
-    auto dr2 = dx * dx + dy * dy;
-    auto d = s.x * t.y - s.y * t.x;
+    const auto dx = t.x - s.x;
+    const auto dy = t.y - s.y;
+    const auto dr2 = dx * dx + dy * dy;
+    const auto d = s.x * t.y - s.y * t.x;
 
-    auto discriminant = r * r * dr2 - d * d;
+    const auto discriminant = r * r * dr2 - d * d;
     if (discriminant > 0) {
-        auto rootOfDicriminant = sqrt(discriminant);
-        *out = Vector<T>{ (d * dy + details::sgn(dy) * dx * rootOfDicriminant) / dr2,
-                          (-d * dx + std::abs(dy) * rootOfDicriminant) / dr2 };
+        const auto rootOfDicriminant = sqrt(discriminant);
+        *out = V{ (d * dy + details::sgn(dy) * dx * rootOfDicriminant) / dr2,
+                  (-d * dx + std::abs(dy) * rootOfDicriminant) / dr2 };
         ++out;
 
-        *out = Vector<T>{ (d * dy - details::sgn(dy) * dx * rootOfDicriminant) / dr2,
-                          (-d * dx - std::abs(dy) * rootOfDicriminant) / dr2 };
+        *out = V{ (d * dy - details::sgn(dy) * dx * rootOfDicriminant) / dr2,
+                  (-d * dx - std::abs(dy) * rootOfDicriminant) / dr2 };
         ++out;
 
         *count = 2;
     } else if (discriminant == 0) {
-        *out = Vector<T>{ (d * dy) / dr2, (-d * dx) / dr2 };
+        *out = V{ (d * dy) / dr2, (-d * dx) / dr2 };
         ++out;
 
         *count = 1;
@@ -378,8 +417,8 @@ bool intersectsLine(const Vector<T> &p, const Vector<T> &r, const Vector<T> &q, 
     return true;
 }
 
-template <typename T>
-bool intersectsCircle(T r, const Vector<T> &s, const Vector<T> &t, Vector<T> *out, int *count)
+template <typename T, typename V, typename Out>
+bool intersectsCircle(T r, const V &s, const V &t, Out out, int *count)
 {
     if (!line::intersectsCircle(r, s, t, out, count)) {
         return false;
@@ -388,8 +427,8 @@ bool intersectsCircle(T r, const Vector<T> &s, const Vector<T> &t, Vector<T> *ou
     bool inside[2];
     auto st = t - s;
     for (int i = 0; i < *count; i++) {
-        auto &v = out[i];
-        inside[i] = (v - s).dot(st) >= 0 && (v - t).dot(st) <= 0;
+        const auto &v = out[i];
+        inside[i] = dot(v - s, st) >= 0 && dot(v - t, st) <= 0;
     }
 
     if (*count == 2) {
@@ -420,7 +459,7 @@ namespace circle
     {
         const auto radiusSq = r * r;
         for (auto it = begin; it != end; ++it) {
-            if (it->lengthSq() > radiusSq) {
+            if (lengthSq(*it) > radiusSq) {
                 return false;
             }
         }
