@@ -100,19 +100,19 @@ float bounceOut(float t, float b, float c, float d)
     }
 }
 
-float quadIn (float t,float b , float c, float d)
+float quadIn (float t, float b , float c, float d)
 {
     t /= d;
     return c * t * t + b;
 }
 
-float quadOut(float t,float b , float c, float d)
+float quadOut(float t, float b , float c, float d)
 {
     t /= d;
     return -c * t * (t - 2.0f) + b;
 }
 
-float quadInOut(float t,float b , float c, float d)
+float quadInOut(float t, float b , float c, float d)
 {
     t /= d / 2.0f;
     if (t < 1.0f) {
