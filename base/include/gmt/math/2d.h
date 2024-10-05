@@ -32,7 +32,7 @@ struct Rotation
     explicit Rotation(float angle) : c{ std::cos(angle) }, s{ std::sin(angle) } {}
 
     template <typename T>
-    T apply(const T &v) const
+    [[nodiscard]] T apply(const T &v) const
     {
         T result;
         result.x = v.x * c - v.y * s;
@@ -47,7 +47,10 @@ struct Rotation
 template <typename T = float>
 struct alignas(T) Vector
 {
-    static Vector<T> zero() { return Vector<T>(static_cast<T>(0), static_cast<T>(0)); }
+    [[nodiscard]] static Vector<T> zero()
+    {
+        return Vector<T>(static_cast<T>(0), static_cast<T>(0));
+    }
 
     T x{}, y{};
 
@@ -55,36 +58,36 @@ struct alignas(T) Vector
     Vector(T x, T y);
 
     Vector(const glm::vec2 &v): x{ v.x }, y{ v.y } {}
-    operator glm::vec2() const { return glm::vec2{ x, y }; }
+    [[nodiscard]] operator glm::vec2() const { return glm::vec2{ x, y }; }
 
-    T *data();
-    bool operator==(const Vector<T> &v) const;
-    Vector<T> operator+(const Vector<T> &v) const;
+    [[nodiscard]] T *data();
+    [[nodiscard]] bool operator==(const Vector<T> &v) const;
+    [[nodiscard]] Vector<T> operator+(const Vector<T> &v) const;
     Vector<T>& operator+=(const Vector<T> &v);
-    Vector<T> operator-(const Vector<T> &v) const;
-    Vector<T> operator*(const Vector<T> &v) const;
-    Vector<T> operator*(T v) const;
-    Vector<T> operator/(T v) const;
+    [[nodiscard]] Vector<T> operator-(const Vector<T> &v) const;
+    [[nodiscard]] Vector<T> operator*(const Vector<T> &v) const;
+    [[nodiscard]] Vector<T> operator*(T v) const;
+    [[nodiscard]] Vector<T> operator/(T v) const;
     Vector<T>& operator*=(T v);
     Vector<T>& operator/=(T v);
 
     template <typename U>
     Vector<T>& operator-=(const Vector<U> &v);
 
-    Vector<T> operator-() const;
+    [[nodiscard]] Vector<T> operator-() const;
     void set(T x, T y);
-    T dot(const Vector<T> &v) const;
-    T cross(const Vector<T> &v) const;
+    [[nodiscard]] T dot(const Vector<T> &v) const;
+    [[nodiscard]] T cross(const Vector<T> &v) const;
 
     template <typename V>
-    T distanceSq(const V &v) const;
-    T distance(const Vector<T> &v) const;
-    T lengthSq() const;
-    T length() const;
-    T atan2f() const;
-    Vector<T> rotate(float angle) const;
-    Vector<T> rotate(const Rotation &rotation) const;
-    void normalize();
+    [[nodiscard]] T distanceSq(const V &v) const;
+    [[nodiscard]] T distance(const Vector<T> &v) const;
+    [[nodiscard]] T lengthSq() const;
+    [[nodiscard]] T length() const;
+    [[nodiscard]] T atan2f() const;
+    [[nodiscard]] Vector<T> rotate(float angle) const;
+    [[nodiscard]] Vector<T> rotate(const Rotation &rotation) const;
+    [[nodiscard]] Vector<T> normalize() const;
 };
 static_assert(sizeof(Vector<double>) == 2 * sizeof(double), "");
 static_assert(sizeof(Vector<float>) == 2 * sizeof(float), "");
@@ -119,26 +122,16 @@ template <typename T>
 T sqrt(T value);
 
 template <typename T>
-void rotate(T &v, float angle)
+void rotate(T &v, decltype(T::x) angle)
 {
-    const auto x{ v.x };
-    const auto y{ v.y };
-
-    const auto c = static_cast<decltype(x)>(cos(angle));
-    const auto s = static_cast<decltype(x)>(sin(angle));
-
-    v.x = x * c - y * s;
-    v.y = x * s + y * c;
+    const Rotation r{ angle };
+    return r.apply(v);
 }
 
 template <typename T>
 void rotate(T &v, const Rotation &r)
 {
-    const auto x{ v.x };
-    const auto y{ v.y };
-
-    v.x = x * r.c - y * r.s;
-    v.y = x * r.s + y * r.c;
+    return r.apply(v);
 }
 
 template <typename T>
@@ -695,11 +688,10 @@ Vector<T> Vector<T>::rotate(const Rotation &rotation) const
 }
 
 template <typename T>
-void Vector<T>::normalize()
+Vector<T> Vector<T>::normalize() const
 {
-    auto len = length();
-    x /= len;
-    y /= len;
+    const auto len = length();
+    return { x / len, y / len };
 }
 
 }
