@@ -124,14 +124,7 @@ T sqrt(T value);
 template <typename T>
 void rotate(T &v, decltype(T::x) angle)
 {
-    const Rotation r{ angle };
-    return r.apply(v);
-}
-
-template <typename T>
-void rotate(T &v, const Rotation &r)
-{
-    return r.apply(v);
+    v = Rotation{ angle }.apply(v);
 }
 
 template <typename T>
