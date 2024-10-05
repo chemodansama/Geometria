@@ -42,6 +42,13 @@ enum class InputLayoutEditorEvent
 
 class InputLayout;
 
+enum class ScalarType
+{
+    Default,
+    Float,
+    UnsignedByte,
+};
+
 class InputLayoutEditor
 {
 public:
@@ -50,8 +57,13 @@ public:
     }
 
     InputLayoutEditor &bind(const VertexBuffer *buffer);
-    InputLayoutEditor &setAttribute(const std::string &name, bool normalized, GLsizei stride, void *ptr, int instanced = 0);
-    InputLayoutEditor &appendAttribute(const std::string &name, bool normalized, GLsizei stride, int instanced = 0);
+    InputLayoutEditor& setAttribute(const std::string& name, bool normalized, GLsizei stride,
+        void* ptr, int instanced = 0, int componentsCount = 0,
+        ScalarType scalarType = ScalarType::Default);
+
+    InputLayoutEditor& appendAttribute(const std::string& name, bool normalized, GLsizei stride,
+        int instanced = 0, int componentsCount = 0,
+        ScalarType scalarType = ScalarType::Default);
 
     void commit(InputLayout *layout);
 
@@ -66,7 +78,7 @@ private:
     std::queue<detail::AttributeBinding> attributes_;
     void *nextAttributePtr_{ nullptr };
 };
-    
+
 class InputLayout
 {
 public:
@@ -81,5 +93,5 @@ private:
     
     void edit(InputLayoutEditor &builder);
 };
-    
+
 }

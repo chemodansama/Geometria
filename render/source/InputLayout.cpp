@@ -18,6 +18,9 @@ namespace
 GLint getScalarTypeSize(GLenum type)
 {
     switch (type) {
+    case GL_UNSIGNED_BYTE:
+        return 1;
+
     case GL_FLOAT:
         return 4;
         
@@ -25,6 +28,7 @@ GLint getScalarTypeSize(GLenum type)
         return 8;
 
     default:
+        assert(false);
         return 0;
     }
 }
@@ -96,7 +100,8 @@ InputLayoutEditor &InputLayoutEditor::bind(const VertexBuffer *buffer)
     return *this;
 }
 
-InputLayoutEditor &InputLayoutEditor::setAttribute(const std::string &name, bool normalized, GLsizei stride, void *ptr, int instanced)
+InputLayoutEditor &InputLayoutEditor::setAttribute(const std::string &name, bool normalized,
+	GLsizei stride, void *ptr, int instanced, int componentsCount, ScalarType scalarType)
 {
     auto attribute = program_->attribute(name);
     if (!attribute) {
@@ -105,19 +110,27 @@ InputLayoutEditor &InputLayoutEditor::setAttribute(const std::string &name, bool
     }
     
     GLint size;
-    GLenum scalarType;
-    GLuint scalarCount;
-    if (!unpackType(attribute->type(), &size, &scalarType, &scalarCount)) {
+    GLenum shaderScalarType;
+    GLuint shaderScalarCount;
+    if (!unpackType(attribute->type(), &size, &shaderScalarType, &shaderScalarCount)) {
         utils::logf("Failed to unpack attribute({}) type: {}", name, attribute->type());
         return *this;
     }
     
-    auto scalarSize = getScalarTypeSize(scalarType);
-    for (GLuint i = 0; i < scalarCount; i++) {
+    if (componentsCount > 0) {
+        size = componentsCount;
+    }
+
+    shaderScalarType =
+        scalarType == ScalarType::Float ? GL_FLOAT :
+        scalarType == ScalarType::UnsignedByte ? GL_UNSIGNED_BYTE : shaderScalarType;
+
+    auto scalarSize = getScalarTypeSize(shaderScalarType);
+    for (GLuint i = 0; i < shaderScalarCount; i++) {
         detail::AttributeBinding binding;
         binding.location = attribute->location() + i;
         binding.size = size;
-        binding.type = scalarType;
+        binding.type = shaderScalarType;
         binding.ptr = (void*)(reinterpret_cast<uintptr_t>(ptr) 
             + static_cast<uintptr_t>(i) * size * scalarSize);
         binding.stride = stride;
@@ -128,13 +141,15 @@ InputLayoutEditor &InputLayoutEditor::setAttribute(const std::string &name, bool
         events_.push(detail::InputLayoutEditorEvent::BindAttribute);
     }
     nextAttributePtr_ = reinterpret_cast<uint8_t*>(ptr) 
-        + static_cast<uintptr_t>(scalarCount) * size * scalarSize;
+        + static_cast<uintptr_t>(shaderScalarCount) * size * scalarSize;
     return *this;
 }
 
-InputLayoutEditor &InputLayoutEditor::appendAttribute(const std::string &name, bool normalized, GLsizei stride, int instanced)
+InputLayoutEditor &InputLayoutEditor::appendAttribute(const std::string &name, bool normalized,
+	GLsizei stride, int instanced, int componentsCount, ScalarType scalarType)
 {
-    return setAttribute(name, normalized, stride, nextAttributePtr_, instanced);
+    return setAttribute(name, normalized, stride, nextAttributePtr_, instanced, componentsCount,
+        scalarType);
 }
 
 void InputLayoutEditor::commit(InputLayout *layout)
@@ -145,7 +160,7 @@ void InputLayoutEditor::commit(InputLayout *layout)
 void InputLayout::edit(InputLayoutEditor &builder)
 {
     vao_.bind();
-    
+
     size_t bufferIndex = 0;
     while (!builder.events_.empty()) {
         auto event = builder.events_.front();
@@ -173,13 +188,13 @@ void InputLayout::edit(InputLayoutEditor &builder)
             assert(false);
         }
     }
-    
+
     vao_.unbind();
     
     for (auto &buffer : builder.buffers_) {
         buffer->unbind();
     }
-    
+
     auto err = glGetError();
     assert(err == GL_NO_ERROR);
 }
