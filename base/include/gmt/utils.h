@@ -162,6 +162,12 @@ auto randomDistribution(T min, T max)
     return Distribution<D>(actualDistribution, ::details::randomEngine());
 }
 
+template <typename K>
+auto randomDistribution(K distribution)
+{
+    return Distribution<K>(distribution, ::details::randomEngine());
+}
+
 template <typename T, typename std::enable_if_t<std::is_floating_point_v<T>, bool> = true>
 T random(T min, T max)
 {

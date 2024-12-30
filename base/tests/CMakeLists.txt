@@ -8,6 +8,7 @@ set(
     "Observable.cpp"
     "path.cpp"
     "Plane.cpp"
+    "Random.cpp"
     "tests.cpp"
     "Weak.cpp"
 )
