@@ -6,25 +6,24 @@
 
 #pragma once
 
-#include <random>
-
 #ifdef __ANDROID__
 #include <android/log.h>
 #elif defined(_WIN32)
 #include <iostream>
 #endif
 
-#include <cstdlib>
+#include <concepts>
 #include <cstdlib>
 #include <ctime>
 #include <iomanip>
 #include <memory>
+#include <random>
 #include <sstream>
 #include <string>
 #include <vector>
 
-#include <glm/glm.hpp>
 #include <fmt/format.h>
+#include <glm/glm.hpp>
 
 #ifdef __ANDROID__
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, "gmt", __VA_ARGS__)
@@ -146,7 +145,7 @@ private:
     std::default_random_engine &engine_;
 };
 
-template <typename T, typename std::enable_if_t<std::is_floating_point_v<T>, bool> = true>
+template <typename T> requires std::floating_point<T>
 auto randomDistribution(T min, T max)
 {
     using D = std::uniform_real_distribution<T>;
@@ -154,7 +153,7 @@ auto randomDistribution(T min, T max)
     return Distribution<D>(actualDistribution, ::details::randomEngine());
 }
 
-template <typename T, typename std::enable_if_t<std::is_integral_v<T>, bool> = true>
+template <typename T> requires std::integral<T>
 auto randomDistribution(T min, T max)
 {
     using D = std::uniform_int_distribution<T>;
@@ -162,7 +161,7 @@ auto randomDistribution(T min, T max)
     return Distribution<D>(actualDistribution, ::details::randomEngine());
 }
 
-template <typename K>
+template <typename K> requires (!std::integral<K> && !std::floating_point<K>)
 auto randomDistribution(K distribution)
 {
     return Distribution<K>(distribution, ::details::randomEngine());

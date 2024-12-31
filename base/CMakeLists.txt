@@ -61,10 +61,10 @@ if (CMAKE_GENERATOR MATCHES "Visual Studio")
 endif()
 
 add_subdirectory("${PROJECT_SOURCE_DIR}/thirdparty/glm-1.0.1")
-target_link_libraries(GeometriaBase PUBLIC glm::glm)
+target_link_libraries(GeometriaBase PUBLIC glm)
 
 add_subdirectory("${PROJECT_SOURCE_DIR}/thirdparty/fmt-10.1.1")
-target_link_libraries(GeometriaBase PUBLIC fmt::fmt-header-only)
+target_link_libraries(GeometriaBase PUBLIC fmt-header-only)
 
 if (GEOMETRIA_BUILD_TESTS)
     if (GEOMETRIA_STATIC_RUNTIME)
