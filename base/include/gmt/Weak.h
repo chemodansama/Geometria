@@ -94,14 +94,18 @@ template <typename T>
 Weak<T>::Weak(details::WeakControlBlock<T> *controlBlock)
     : controlBlock_{ controlBlock }
 {
-    controlBlock_->count += 1;
+    if (controlBlock_) {
+        controlBlock_->count += 1;
+    }
 }
 
 template <typename T>
 Weak<T>::Weak(const Weak<T> &source)
 {
     controlBlock_ = source.controlBlock_;
-    controlBlock_->count += 1;
+    if (controlBlock_) {
+        controlBlock_->count += 1;
+    }
 }
 
 template <typename T>
@@ -121,7 +125,9 @@ Weak<T>& Weak<T>::operator=(const Weak<T> &source)
     releaseControlBlock();
 
     controlBlock_ = source.controlBlock_;
-    controlBlock_->count += 1;
+    if (controlBlock_) {
+        controlBlock_->count += 1;
+    }
 
     return *this;
 }
