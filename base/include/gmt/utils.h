@@ -124,7 +124,7 @@ template <typename... T>
 std::string concat(const T & ... t);
 
 template <typename Out>
-void split(const std::string &s, char delim, Out destination);
+void split(std::string s, char delim, Out destination);
 
 long getTime(void);
 
@@ -289,9 +289,9 @@ void log(const char *str)
 }
 
 template <typename Out>
-void split(const std::string &s, char delim, Out destination)
+void split(std::string s, char delim, Out destination)
 {
-    std::stringstream ss(s);
+    std::stringstream ss{ std::move(s) };
     std::string item;
     while (std::getline(ss, item, delim)) {
         destination = item;
